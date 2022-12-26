@@ -127,10 +127,16 @@ set_target_properties(phoenix PROPERTIES
         DEBUG_POSTFIX "${PHOENIX_DEBUG_POSTFIX}")
 
 if (PHOENIX_INSTALL)
-        install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
-        install(DIRECTORY "include/phoenix" TYPE INCLUDE)
-        install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
+    install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
+    
+    install(DIRECTORY "include/phoenix" TYPE INCLUDE)
+    install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
+
+    if (BUILD_SHARED_LIBS)
         install(DIRECTORY "vendor/fmt/include/" TYPE INCLUDE)
+    else ()
+        install(TARGETS fmt glm squish mio lexy ARCHIVE LIBRARY RUNTIME)
+    endif ()
 endif ()
 
 # when building tests, create a test executable and load it into CTest
