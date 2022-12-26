@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 include(CheckIncludeFiles)
 project(phoenix VERSION 1.0.1)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(PHOENIX_LOG_LEVEL 3 CACHE STRING "The logging level to use for phoenix. Set to 4, 3, 2, or 1 for DEBUG, INFO, WARN or ERROR respectively")
 
 option(PHOENIX_BUILD_EXAMPLES "Build example code" OFF)
@@ -124,12 +124,13 @@ if (NOT MSVC)
 endif ()
 
 set_target_properties(phoenix PROPERTIES
-        PUBLIC_HEADER "${PHOENIX_HEADERS}"
         DEBUG_POSTFIX "${PHOENIX_DEBUG_POSTFIX}")
 
 if (PHOENIX_INSTALL)
-        install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME PUBLIC_HEADER DESTINATION "include/phoenix")
+        install(TARGETS phoenix ARCHIVE LIBRARY RUNTIME)
+        install(DIRECTORY "include/phoenix" TYPE INCLUDE)
         install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp")
+        install(DIRECTORY "vendor/fmt/include/" TYPE INCLUDE)
 endif ()
 
 # when building tests, create a test executable and load it into CTest
