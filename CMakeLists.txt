@@ -113,7 +113,7 @@ target_include_directories(phoenix PUBLIC include)
 
 # phoenix public headers include glm and fmt headers
 target_link_libraries(phoenix
-        PUBLIC glm fmt
+        PUBLIC glm::glm_static fmt
         PRIVATE squish mio lexy)
 
 target_compile_definitions(phoenix PUBLIC ${PHOENIX_DEFINES})
@@ -131,11 +131,13 @@ if (PHOENIX_INSTALL)
     
     install(DIRECTORY "include/phoenix" TYPE INCLUDE)
     install(DIRECTORY "vendor/glm/glm" TYPE INCLUDE FILES_MATCHING PATTERN "*.hpp" PATTERN "*.inl" PATTERN "*.h")
+    install(DIRECTORY "vendor/fmt/include/" TYPE INCLUDE)
 
-    if (BUILD_SHARED_LIBS)
-        install(DIRECTORY "vendor/fmt/include/" TYPE INCLUDE)
-    else ()
-        install(TARGETS fmt glm squish mio lexy ARCHIVE LIBRARY RUNTIME)
+    if (NOT BUILD_SHARED_LIBS)
+        # For static linking we'll need to provide the dependency static libraries
+        foreach(lib fmt glm::glm_static)
+            install(FILES "$<TARGET_LINKER_FILE:${lib}>" TYPE LIB)
+        endforeach()
     endif ()
 endif ()
 
